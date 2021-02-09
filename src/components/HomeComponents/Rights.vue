@@ -18,6 +18,7 @@
   </div>
 </template>
 
+
 <script>
 import breadcrumb from "./component/breadcrumb";
 
