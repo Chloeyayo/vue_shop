@@ -50,6 +50,7 @@
               type="primary"
               icon="el-icon-edit"
               size="mini"
+              @click="editUser(scope.row)"
             ></el-button>
             <!-- 删除按钮 -->
             <el-button
@@ -90,6 +91,13 @@
         @getUserList="getUserList"
         @hideAddDialog="hideAddDialog"
       ></addUser>
+      <editUser
+        :editDialogVisible="editDialogVisible"
+        :editForm="editUserList"
+        @getUserList="getUserList"
+        @hideEditDialog="hideEditDialog"
+      >
+      </editUser>
     </el-card>
   </div>
 </template>
@@ -97,6 +105,7 @@
 <script>
 import breadcrumb from "./component/breadcrumb";
 import addUser from "./Users/addUser";
+import editUser from "./Users/editUser";
 export default {
   name: "users",
   data() {
@@ -112,15 +121,19 @@ export default {
         total: 0,
       },
       addDialogVisible: false,
+      editDialogVisible: false,
+      editUserList: {},
     };
   },
   components: {
     breadcrumb,
     addUser,
+    editUser,
   },
   created() {
     this.getUserList();
   },
+
   methods: {
     async getUserList() {
       const { data: res } = await this.$http.get("/users", {
@@ -165,7 +178,9 @@ export default {
         return this.$message.error(res.meta.msg);
       }
       this.$message.success(res.meta.msg);
-      let totalPage = Math.ceil((this.userList.total - 1) / this.queryInfo.pagesize);
+      let totalPage = Math.ceil(
+        (this.userList.total - 1) / this.queryInfo.pagesize
+      );
       let currentPage =
         this.queryInfo.pagenum > totalPage ? totalPage : this.queryInfo.pagenum;
       this.queryInfo.pagenum = this.queryInfo.pagenum < 1 ? 1 : currentPage;
@@ -173,6 +188,16 @@ export default {
     },
     hideAddDialog() {
       this.addDialogVisible = false;
+    },
+    hideEditDialog() {
+      this.editDialogVisible = false;
+    },
+    editUser(user) {
+      this.editDialogVisible = true;
+      console.log(user);
+      this.editUserList.id = user.id;
+      this.editUserList.email = user.email;
+      this.editUserList.mobile = user.mobile;
     },
   },
 };
