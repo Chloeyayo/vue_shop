@@ -6,6 +6,7 @@
         <el-col :span="8">
           <el-input
             v-model="queryInfo.query"
+            
             placeholder="请输入内容"
             @keyup.enter.native="searchUser"
             clearable
@@ -35,6 +36,8 @@
         <el-table-column prop="role_name" label="名称" width="120">
         </el-table-column>
         <el-table-column prop="email" label="邮箱" width="180">
+        </el-table-column
+        >        <el-table-column prop="mobile" label="手机" width="180">
         </el-table-column
         ><el-table-column label="状态" width="100">
           <template v-slot="scope">
