@@ -13,6 +13,42 @@
         </el-col>
       </el-row>
       <el-table :data="rolesList" style="width: 100%" border>
+        <el-table-column type="expand">
+          <template v-slot="score">
+            <el-row
+              :gutter="10"
+              v-for="(itemOne, index) in score.row.children"
+              :key="index"
+              :class="['bdbottom',index==0?'bdtop':'']"
+            >
+              <el-col :span="4">
+                <el-tag closable>{{ itemOne.authName }}</el-tag>
+              </el-col>
+              <el-col :span="20">
+                <el-row
+                  :gutter="10"
+                  v-for="(itemTwo, index) in itemOne.children"
+                  :key="index"
+                >
+                  <el-col :span="4">
+                    <el-tag type="warning" closable> {{ itemTwo.authName }}</el-tag>
+                  </el-col>
+                  <el-col :span="20">
+                    <el-row :gutter="10">
+                      <el-col
+                        :span="6"
+                        v-for="(itemThree, index) in itemTwo.children"
+                        :key="index"
+                      >
+                        <el-tag type="success" closable>{{ itemThree.authName }}</el-tag>
+                      </el-col>
+                    </el-row>
+                  </el-col>
+                </el-row>
+              </el-col>
+            </el-row>
+          </template>
+        </el-table-column>
         <el-table-column type="index"> </el-table-column>
         <el-table-column prop="id" label="ID" width="50"> </el-table-column>
         <el-table-column prop="roleName" label="角色名称"> </el-table-column>
@@ -92,7 +128,7 @@ export default {
     },
     editRoles(roles) {
       //要一个一个传进去 不然prop会更新父附件
-      this.editRolesList.id = roles.id; 
+      this.editRolesList.id = roles.id;
       this.editRolesList.roleDesc = roles.roleDesc;
       this.editRolesList.roleName = roles.roleName;
       this.editDialogVisible = true;
@@ -117,5 +153,18 @@ export default {
 <style lang="less" scoped>
 .el-table {
   margin-top: 15px;
+}
+.el-row{
+  display: flex;
+  align-items: center;
+}
+.el-tag{
+  margin:  10px 0;
+}
+.bdtop {
+  border-top: 1px solid rgb(240, 240, 240);
+}
+.bdbottom {
+  border-bottom: 1px solid rgb(241, 241, 241);
 }
 </style>
