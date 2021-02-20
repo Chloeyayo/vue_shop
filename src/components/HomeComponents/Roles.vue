@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="roles">
     <breadcrumb :path="['权限管理', '角色列表']"></breadcrumb>
     <el-card>
       <el-row>
@@ -19,30 +19,42 @@
               :gutter="10"
               v-for="(itemOne, index) in score.row.children"
               :key="index"
-              :class="['bdbottom',index==0?'bdtop':'']"
+              :class="['bdbottom', index == 0 ? 'bdtop' : '']"
             >
               <el-col :span="4">
-                <el-tag closable>{{ itemOne.authName }}</el-tag>
+                <el-tag closable @close="removeRightById(score.row, itemOne)">{{
+                  itemOne.authName
+                }}</el-tag>
               </el-col>
               <el-col :span="20">
                 <el-row
                   :gutter="10"
                   v-for="(itemTwo, index) in itemOne.children"
                   :key="index"
+                  :class="[
+                    index !== itemOne.children.length - 1 ? 'bdbottom' : '',
+                  ]"
                 >
                   <el-col :span="4">
-                    <el-tag type="warning" closable> {{ itemTwo.authName }}</el-tag>
+                    <el-tag
+                      type="warning"
+                      closable
+                      @close="removeRightById(score.row, itemTwo)"
+                    >
+                      {{ itemTwo.authName }}</el-tag
+                    >
                   </el-col>
                   <el-col :span="20">
-                    <el-row :gutter="10">
-                      <el-col
-                        :span="6"
-                        v-for="(itemThree, index) in itemTwo.children"
-                        :key="index"
-                      >
-                        <el-tag type="success" closable>{{ itemThree.authName }}</el-tag>
-                      </el-col>
-                    </el-row>
+                    <el-tag
+                      type="success"
+                      class="tag-three"
+                      closable
+                      @close="removeRightById(score.row, itemThree)"
+                      v-for="(itemThree, index) in itemTwo.children"
+                      :key="index"
+                    >
+                      {{ itemThree.authName }}</el-tag
+                    >
                   </el-col>
                 </el-row>
               </el-col>
@@ -60,19 +72,30 @@
               size="mini"
               icon="el-icon-edit"
               @click="editRoles(score.row)"
-            ></el-button>
+              >编辑</el-button
+            >
             <el-button
               type="danger"
               size="mini"
               icon="el-icon-delete"
               @click="deleteRoles(score.row)"
-            ></el-button>
-            <el-button
-              type="warning"
-              size="mini"
-              icon="el-icon-setting"
-              @click="editRights(score.row)"
-            ></el-button>
+              >删除</el-button
+            >
+            <el-tooltip
+              class="item"
+              effect="dark"
+              content="分配权限"
+              placement="top-start"
+              :enterable="false"
+            >
+              <el-button
+                type="warning"
+                size="mini"
+                icon="el-icon-setting"
+                @click="editRights(score.row)"
+                >分配权限</el-button
+              >
+            </el-tooltip>
           </template>
         </el-table-column>
       </el-table>
@@ -110,6 +133,7 @@ export default {
       addDialogVisible: false,
     };
   },
+
   components: {
     breadcrumb,
     editRoles,
@@ -139,12 +163,36 @@ export default {
     async deleteRoles(roles) {
       const { data: res } = await this.$http.delete(`/roles/${roles.id}`);
       if (res.meta.status !== 200) {
-        return this.$message.error("删除用户失败！");
+        return this.$message.error(res.meta.msg);
       }
+      this.$message.success("删除用户成功");
       this.getRolesList();
     },
     hideAddDialog() {
       this.addDialogVisible = false;
+    },
+    async removeRightById(role, right) {
+      console.log(role.id, right.id);
+      const confirmResult = await this.$confirm(
+        "此操作将永久删除该文件, 是否继续?",
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        }
+      ).catch((err) => err);
+      if (confirmResult !== "confirm") {
+        return this.$message.info("取消了删除");
+      }
+      const { data: res } = await this.$http.delete(
+        `/roles/${role.id}/rights/${right.id}`
+      );
+      if (res.meta.status !== 200) {
+        return this.$message.error(res.meta.msg);
+      }
+      this.$message.success("删除权限成功");
+      role.children = res.data;
     },
   },
 };
@@ -154,17 +202,20 @@ export default {
 .el-table {
   margin-top: 15px;
 }
-.el-row{
+.el-row {
   display: flex;
   align-items: center;
 }
-.el-tag{
-  margin:  10px 0;
+.el-tag {
+  margin: 10px 0;
 }
 .bdtop {
   border-top: 1px solid rgb(240, 240, 240);
 }
 .bdbottom {
   border-bottom: 1px solid rgb(241, 241, 241);
+}
+.tag-three {
+  margin-right: 10px;
 }
 </style>
