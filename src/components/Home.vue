@@ -114,7 +114,7 @@ export default {
     line-height: 28px;
     font-size: 10px;
     text-align: center;
-    background-color: rgb(218, 218, 218);
+    background-color: rgb(248, 248, 248);
     letter-spacing: 0.2em;
     cursor: pointer;
   }
@@ -127,7 +127,9 @@ export default {
     margin-left: 10px;
   }
 }
-
+.title-icon {
+      transform: translateX(3px);
+}
 .submenu-title,
 .menu-item {
   position: relative;

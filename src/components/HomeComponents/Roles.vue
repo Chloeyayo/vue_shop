@@ -15,6 +15,8 @@
       <el-table :data="rolesList" style="width: 100%" border>
         <el-table-column type="expand">
           <template v-slot="score">
+            <span  v-if="cheackRights(score.row)">无权限</span>
+
             <el-row
               :gutter="10"
               v-for="(itemOne, index) in score.row.children"
@@ -63,8 +65,14 @@
         </el-table-column>
         <el-table-column type="index"> </el-table-column>
         <el-table-column prop="id" label="ID" width="50"> </el-table-column>
-        <el-table-column prop="roleName" label="角色名称"> </el-table-column>
-        <el-table-column prop="roleDesc" label="角色描述"> </el-table-column>
+        <el-table-column prop="roleName" label="角色名称" width="150">
+        </el-table-column>
+        <el-table-column prop="roleDesc" label="角色描述">
+          <template v-slot="score">
+            {{score.row.roleDesc}}
+
+          </template>
+           </el-table-column>
         <el-table-column label="操作">
           <template v-slot="score">
             <el-button
@@ -81,21 +89,14 @@
               @click="deleteRoles(score.row)"
               >删除</el-button
             >
-            <el-tooltip
-              class="item"
-              effect="dark"
-              content="分配权限"
-              placement="top-start"
-              :enterable="false"
+
+            <el-button
+              type="warning"
+              size="mini"
+              icon="el-icon-setting"
+              @click="editRights(score.row)"
+              >分配权限</el-button
             >
-              <el-button
-                type="warning"
-                size="mini"
-                icon="el-icon-setting"
-                @click="editRights(score.row)"
-                >分配权限</el-button
-              >
-            </el-tooltip>
           </template>
         </el-table-column>
       </el-table>
@@ -112,6 +113,14 @@
       @hideAddDialog="hideAddDialog"
     >
     </addRoles>
+    <editRights
+      :editRightsDialogVisible="editRightsDialogVisible"
+      :rightList="rightList"
+      :scoreRights="scoreRights"
+      :roleId="currentRoles.id"
+      @getRolesList="getRolesList"
+      @hideRightsDialog="hideRightsDialog"
+    ></editRights>
   </div>
 </template>
 
@@ -119,6 +128,7 @@
 import breadcrumb from "./component/breadcrumb";
 import editRoles from "./Roles/editRoles";
 import addRoles from "./Roles/addRoles";
+import editRights from "./Roles/editRights";
 
 export default {
   data() {
@@ -131,6 +141,10 @@ export default {
       },
       editDialogVisible: false,
       addDialogVisible: false,
+      editRightsDialogVisible: false,
+      rightList: [],
+      scoreRights:[],
+      currentRoles: [],
     };
   },
 
@@ -138,6 +152,7 @@ export default {
     breadcrumb,
     editRoles,
     addRoles,
+    editRights,
   },
   created() {
     this.getRolesList();
@@ -194,7 +209,34 @@ export default {
       this.$message.success("删除权限成功");
       role.children = res.data;
     },
+    async editRights(score) {
+      const { data: res } = await this.$http.get("/rights/tree");
+      if (res.meta.status !== 200) {
+        return this.$message.error(res.meta.msg);
+      }
+      this.rightList= res.data;
+      this.getDefaultRights(score,this.scoreRights)
+      this.currentRoles=score
+this.editRightsDialogVisible = true;
+    },
+    hideRightsDialog() {
+      this.scoreRights=[]
+      this.editRightsDialogVisible = false;
+    },
+    getDefaultRights(score,arr) {
+      if (!score.children) {
+        return arr.push(score.id)
+      }
+      score.children=Array.from(score.children)
+      score.children.forEach(element => {
+        this.getDefaultRights(element,arr)
+      })
+    },
+    cheackRights(row){
+      return row.children == undefined || row.children.length <= 0
+    }
   },
+
 };
 </script>
 
