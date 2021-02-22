@@ -1,6 +1,6 @@
 <template>
   <div>
-    index<br />
+    index!<br />
     <el-button type="primary" @click="toLogin">Login</el-button>
   </div>
 </template>
