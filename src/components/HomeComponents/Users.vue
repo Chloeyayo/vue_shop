@@ -73,6 +73,7 @@
                 type="warning"
                 icon="el-icon-setting"
                 size="mini"
+                @click="settingUser(scope.row)"
               ></el-button>
             </el-tooltip>
           </template>
@@ -101,6 +102,13 @@
         @hideEditDialog="hideEditDialog"
       >
       </editUser>
+      <settingUser
+      :settingDialogVisible="settingDialogVisible"
+      :settingUserInfo="settingUserInfo"
+      @hideSettingDialog="hideSettingDialog"
+      >
+
+      </settingUser>
     </el-card>
   </div>
 </template>
@@ -109,6 +117,7 @@
 import breadcrumb from "./component/breadcrumb";
 import addUser from "./Users/addUser";
 import editUser from "./Users/editUser";
+import settingUser from "./Users/settingUser";
 export default {
   name: "users",
   data() {
@@ -126,12 +135,15 @@ export default {
       addDialogVisible: false,
       editDialogVisible: false,
       editUserList: {},
+      settingDialogVisible:false,
+      settingUserInfo:{}
     };
   },
   components: {
     breadcrumb,
     addUser,
     editUser,
+    settingUser,
   },
   created() {
     this.getUserList();
@@ -143,7 +155,7 @@ export default {
         params: this.queryInfo,
       });
       if (res.meta.status !== 200) {
-        return this.$message.error("获取用户列表失败！");
+        return this.$message.error(res.meta.msg);
       }
       this.userList.users = res.data.users;
       this.userList.total = res.data.total;
@@ -202,6 +214,13 @@ export default {
       this.editUserList.email = user.email;
       this.editUserList.mobile = user.mobile;
     },
+    settingUser(row) {
+      this.settingUserInfo=row
+      this.settingDialogVisible = true;
+    },
+    hideSettingDialog(){
+      this.settingDialogVisible = false;
+    }
   },
 };
 </script>
