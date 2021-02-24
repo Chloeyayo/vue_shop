@@ -7,12 +7,12 @@ import Welcome from '../components/HomeComponents/Welcome.vue'
 import Users from '../components/HomeComponents/Users.vue'
 import Roles from '../components/HomeComponents/Roles.vue'
 import Rights from '../components/HomeComponents/Rights.vue'
-import Goods from '../components/HomeComponents/Goods.vue'
+import Categories from '../components/HomeComponents/Categories.vue'
 
 Vue.use(VueRouter)
 
 const routes = [
-  // { path: "/", redirect: "/login" },
+  { path: "/", redirect: "/login" },
   { path: '/', component: Index },
   { path: '/login', component: Login },
   {
@@ -34,8 +34,8 @@ const routes = [
       path: "/rights",
       component: Rights
     }, {
-      path: '/goods',
-      component: Goods
+      path: '/categories',
+      component: Categories
     }]
   },
 
