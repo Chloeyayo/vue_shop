@@ -7,6 +7,8 @@ import Welcome from '../components/HomeComponents/Welcome.vue'
 import Users from '../components/HomeComponents/Users.vue'
 import Roles from '../components/HomeComponents/Roles.vue'
 import Rights from '../components/HomeComponents/Rights.vue'
+import Goods from '../components/HomeComponents/Goods.vue'
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -19,19 +21,22 @@ const routes = [
     redirect: '/welcome',
 
     children: [
-      {
-        path: '/welcome',
-        component: Welcome
-      }, {
-        path: '/users',
-        component: Users
-      }, {
-        path: '/roles',
-        component: Roles
-      }, {
-        path: "/rights",
-        component: Rights
-      }]
+    {
+      path: '/welcome',
+      component: Welcome
+    }, {
+      path: '/users',
+      component: Users
+    }, {
+      path: '/roles',
+      component: Roles
+    }, {
+      path: "/rights",
+      component: Rights
+    }, {
+      path: '/goods',
+      component: Goods
+    }]
   },
 
 ]
@@ -40,7 +45,7 @@ const router = new VueRouter({
   routes
 })
 router.beforeEach((to, _from, next) => {
-  if (to.path == "/login") {
+  if (to.path=="/login" || to.path=="/index") {
     return next()
   }
   const token = window.sessionStorage.getItem('token')

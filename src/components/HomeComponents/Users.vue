@@ -6,7 +6,6 @@
         <el-col :span="8">
           <el-input
             v-model="queryInfo.query"
-            
             placeholder="请输入内容"
             @keyup.enter.native="searchUser"
             clearable
@@ -27,7 +26,7 @@
         </el-col>
       </el-row>
 
-      <el-table :data="userList.users" style="width: 100%">
+      <el-table :data="userList.users" style="width: 100%"  border>
         <el-table-column type="index" label="#" width="40"> </el-table-column>
         <el-table-column prop="id" label="id" width="80" sortable>
         </el-table-column>
@@ -36,8 +35,8 @@
         <el-table-column prop="role_name" label="名称" width="120">
         </el-table-column>
         <el-table-column prop="email" label="邮箱" width="180">
-        </el-table-column
-        >        <el-table-column prop="mobile" label="手机" width="180">
+        </el-table-column>
+        <el-table-column prop="mobile" label="手机" width="180">
         </el-table-column
         ><el-table-column label="状态" width="100">
           <template v-slot="scope">
@@ -103,11 +102,13 @@
       >
       </editUser>
       <settingUser
-      :settingDialogVisible="settingDialogVisible"
-      :settingUserInfo="settingUserInfo"
-      @hideSettingDialog="hideSettingDialog"
-      >
+        :settingDialogVisible="settingDialogVisible"
+        :settingUserInfo="settingUserInfo"
+        :RolesList="RolesList"
+        @hideSettingDialog="hideSettingDialog"
+        @getUserList="getUserList"
 
+      >
       </settingUser>
     </el-card>
   </div>
@@ -135,8 +136,9 @@ export default {
       addDialogVisible: false,
       editDialogVisible: false,
       editUserList: {},
-      settingDialogVisible:false,
-      settingUserInfo:{}
+      settingDialogVisible: false,
+      settingUserInfo: {},
+      RolesList: [],
     };
   },
   components: {
@@ -215,12 +217,17 @@ export default {
       this.editUserList.mobile = user.mobile;
     },
     settingUser(row) {
-      this.settingUserInfo=row
+      this.settingUserInfo = row;
       this.settingDialogVisible = true;
+      this.getRolesList();
     },
-    hideSettingDialog(){
+    hideSettingDialog() {
       this.settingDialogVisible = false;
-    }
+    },
+    async getRolesList() {
+      const { data: res } = await this.$http.get("/roles");
+      this.RolesList = res.data;
+    },
   },
 };
 </script>
