@@ -8,12 +8,13 @@ import Users from '../components/HomeComponents/Users.vue'
 import Roles from '../components/HomeComponents/Roles.vue'
 import Rights from '../components/HomeComponents/Rights.vue'
 import Categories from '../components/HomeComponents/Categories.vue'
+import Params from '../components/HomeComponents/Params.vue'
 
 Vue.use(VueRouter)
 
 const routes = [
-  { path: "/", redirect: "/login" },
-  { path: '/', component: Index },
+  // { path: "/", redirect: "/login" },
+  { path: '/', component: Home },
   { path: '/login', component: Login },
   {
     path: '/home',
@@ -36,6 +37,9 @@ const routes = [
     }, {
       path: '/categories',
       component: Categories
+    },{
+      path: '/params',
+      component: Params
     }]
   },
 
@@ -45,7 +49,8 @@ const router = new VueRouter({
   routes
 })
 router.beforeEach((to, _from, next) => {
-  if (to.path=="/login" || to.path=="/index") {
+  
+  if (to.path=="/login" ) {
     return next()
   }
   const token = window.sessionStorage.getItem('token')

@@ -6,6 +6,7 @@
         <span @click="goHome">后台管理系统</span>
       </div>
       <div class="hearder-right">
+        <span class="username">{{getUsername}}</span>
         <el-button @click="logout" class="logout">退出</el-button>
       </div>
     </el-header>
@@ -71,6 +72,11 @@ export default {
       },
       isCollapse: false,
     };
+  },
+  computed: {
+    getUsername() {
+      return window.sessionStorage.getItem('username')
+    }
   },
   methods: {
     logout() {
@@ -162,6 +168,10 @@ export default {
       height: 50px;
       transform: translateY(5px);
     }
+  }
+  .username {
+    margin-right: 15px;
+    font-size: 20px;
   }
 }
 

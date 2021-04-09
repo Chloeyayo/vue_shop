@@ -64,6 +64,8 @@ export default {
       }
       this.$message({ message: "登录成功", type: "success" });
       window.sessionStorage.setItem('token',res.data.token)
+      window.sessionStorage.setItem('username',res.data.username)
+      console.log(window.sessionStorage.getItem('username'));
       this.$router.push('/home')
 },
     resetFrom() {
