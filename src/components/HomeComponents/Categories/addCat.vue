@@ -21,6 +21,7 @@
               checkStrictly: true,
             }"
             @change="handleChange"
+            
             clearable
           ></el-cascader>
         </el-form-item>
@@ -63,6 +64,13 @@ export default {
         this.$emit("getCategoryList")
         this.hiddeAddDialog()
       })
+    },
+    async save(){
+      const { data: data}=await this.$http.post('categories',this.addCateForm)
+      if(data.meta.status!==201){
+        console.log(data.meta.status)
+        return data.meta.msg;
+      }
     },
     hiddeAddDialog() {
       this.addCateForm.cat_pid =0

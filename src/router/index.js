@@ -13,8 +13,8 @@ import Params from '../components/HomeComponents/Params.vue'
 Vue.use(VueRouter)
 
 const routes = [
-  { path: "/", redirect: "/login" },
-  { path: '/', component: Index },
+  // { path: "/", redirect: "/login" },
+  { path: '/', component: Home },
   { path: '/login', component: Login },
   {
     path: '/home',
@@ -49,7 +49,8 @@ const router = new VueRouter({
   routes
 })
 router.beforeEach((to, _from, next) => {
-  if (to.path=="/login" || to.path=="/index") {
+  
+  if (to.path=="/login" ) {
     return next()
   }
   const token = window.sessionStorage.getItem('token')
