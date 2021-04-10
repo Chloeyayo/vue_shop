@@ -33,18 +33,36 @@
             </el-col>
           </el-row>
           <el-table :data="attrList" style="width: 100%" border>
-            <el-table-column type="expand">
+            <el-table-column type="expand" >
               <template slot-scope="scope">
+                
                 <el-tag
                   type="primary"
                   size="normal"
                   closable
-                  @close="handleClose(scope)"
+                  @close="handleTabClose(scope)"
                   v-for="(item, index) in scope.row.valueList"
                   :key="index"
                 >
                   {{ item }}
                 </el-tag>
+                <el-input
+                  class="input-new-tag"
+                  v-if="scope.row.inputVisible"
+                  v-model="scope.row.inputValue"
+                  :ref="'saveTagInput-'+scope.$index"
+                  size="small"
+                  @blur="handleInputConfirm(scope)"
+                  
+                >
+                </el-input>
+                <el-button
+                  v-else
+                  class="button-new-tag"
+                  size="small"
+                  @click="showInput(scope)"
+                  >+New Tag</el-button
+                >
               </template>
             </el-table-column>
             <el-table-column type="index" label="#"></el-table-column>
@@ -68,7 +86,7 @@
             </el-table-column>
           </el-table>
         </el-tab-pane>
-        <el-tab-pane label="静态参数" name="only">
+        <el-tab-pane label="静态属性" name="only">
           <el-row :gutter="10">
             <el-col :span="2">
               <el-button type="primary" size="small" @click="addParam"
@@ -83,7 +101,7 @@
                   type="primary"
                   size="normal"
                   closable
-                  @close="handleClose(scope)"
+                  @close="handleTabClose(scope)"
                   v-for="(item, index) in scope.row.valueList"
                   :key="index"
                 >
@@ -115,7 +133,13 @@
       </el-tabs>
     </el-card>
 
-    <addParam :activeTab="activeTab"></addParam>
+    <addParam
+      :activeTab="activeTab"
+      :addDialogVisible="addDialogVisible"
+      :cateId="cateId"
+      @closeAddDialog="closeAddDialog"
+      @getAttrList="getAttrList"
+    ></addParam>
   </div>
 </template>
 
@@ -134,6 +158,7 @@ export default {
       activeTab: "many",
       tableData: [],
       attrList: [],
+      addDialogVisible: false,
     };
   },
   created() {
@@ -160,7 +185,12 @@ export default {
     tabClick() {
       this.getAttrList();
     },
-    addParam() {},
+    addParam() {
+      this.addDialogVisible = true;
+    },
+    closeAddDialog() {
+      this.addDialogVisible = false;
+    },
     async getAttrList() {
       const { data: res } = await this.$http.get(
         `categories/${this.cateId}/attributes`,
@@ -169,15 +199,42 @@ export default {
         }
       );
       this.attrList = res.data;
+
       this.attrList.forEach((e) => {
-        e.valueList = e.attr_vals.split(" ");
+        // 控制文本框的显示与隐藏
+        this.$set(e,"inputVisible",false)
+        this.$set(e,"inputValue","")
+
+        if (e.attr_vals.length !== 0) {
+          e.valueList = e.attr_vals.split(" ");
+        } else {
+          e.valueList = [];
+        }
       });
+
       console.log(this.attrList);
     },
-    editParam(scope) {},
+    editParam(scope) {
+      console.log(scope);
+
+    },
     deleteParam(scope) {},
-    handleClose(scope) {},
+    handleTabClose(scope) {
+      console.log(scope);
+    },
     getAttrValue(scope) {},
+    handleInputConfirm(scope) {
+
+        scope.row.inputVisible = false;
+
+    },
+    showInput(scope) {
+      scope.row.inputVisible=true;
+      this.$nextTick(_ => {
+        let a="saveTagInput-"+scope.$index
+          this.$refs[a].$refs.input.focus();
+        });
+    },
   },
   mounted() {
     this.getAttrList();
@@ -188,12 +245,6 @@ export default {
         return this.cateValue[2];
       }
       return null;
-    },
-    titleText() {
-      if (this.activeTab === "many") {
-        return "动态参数";
-      }
-      return "静态属性";
     },
   },
   components: {
@@ -221,7 +272,11 @@ export default {
 .el-row {
   margin-bottom: 10px;
 }
-.el-tag{
-  margin-right: 15px;
+.el-tag,
+.button-new-tag {
+  margin: 0 15px 15px 0;
+}
+.input-new-tag {
+  width: 100px;
 }
 </style>
