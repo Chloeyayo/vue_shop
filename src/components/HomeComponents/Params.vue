@@ -33,14 +33,15 @@
             </el-col>
           </el-row>
           <el-table :data="attrList" style="width: 100%" border>
-            <el-table-column type="expand" >
+            <el-table-column type="expand">
               <template slot-scope="scope">
-                
                 <el-tag
                   type="primary"
                   size="normal"
                   closable
-                  @close="handleTabClose(scope)"
+                  disable-transitions
+                  @click="click(scope)"
+                  @close="handleTabClose(index, scope)"
                   v-for="(item, index) in scope.row.valueList"
                   :key="index"
                 >
@@ -50,10 +51,10 @@
                   class="input-new-tag"
                   v-if="scope.row.inputVisible"
                   v-model="scope.row.inputValue"
-                  :ref="'saveTagInput-'+scope.$index"
+                  :ref="'saveTagInput-' + scope.$index"
                   size="small"
                   @blur="handleInputConfirm(scope)"
-                  
+                  @keyup.enter.native="handleInputConfirm(scope)"
                 >
                 </el-input>
                 <el-button
@@ -101,16 +102,34 @@
                   type="primary"
                   size="normal"
                   closable
-                  @close="handleTabClose(scope)"
+                  disable-transitions
+                  @close="handleTabClose(index, scope)"
                   v-for="(item, index) in scope.row.valueList"
                   :key="index"
                 >
                   {{ item }}
                 </el-tag>
+                <el-input
+                  class="input-new-tag"
+                  v-if="scope.row.inputVisible"
+                  v-model="scope.row.inputValue"
+                  :ref="'saveTagInput-' + scope.$index"
+                  size="small"
+                  @blur="handleInputConfirm(scope)"
+                  @keyup.enter.native="handleInputConfirm(scope)"
+                >
+                </el-input>
+                <el-button
+                  v-else
+                  class="button-new-tag"
+                  size="small"
+                  @click="showInput(scope)"
+                  >+New Tag</el-button
+                >
               </template>
             </el-table-column>
             <el-table-column type="index" label="#"></el-table-column>
-            <el-table-column label="参数名称" prop="attr_name">
+            <el-table-column label="属性名称" prop="attr_name">
             </el-table-column>
             <el-table-column label="操作">
               <template v-slot="scope">
@@ -140,12 +159,20 @@
       @closeAddDialog="closeAddDialog"
       @getAttrList="getAttrList"
     ></addParam>
+    <editParam
+      :activeTab="activeTab"
+      :editDialogVisible="editDialogVisible"
+      :param="currentParam.row"
+      @closeEditDialog="closeEditDialog"
+      @getAttrList="getAttrList"
+    ></editParam>
   </div>
 </template>
 
 <script>
 import breadcrumb from "./component/breadcrumb";
 import addParam from "./Params/addParam";
+import editParam from "./Params/editParam";
 export default {
   data() {
     return {
@@ -159,6 +186,8 @@ export default {
       tableData: [],
       attrList: [],
       addDialogVisible: false,
+      editDialogVisible: false,
+      currentParam: {},
     };
   },
   created() {
@@ -202,8 +231,8 @@ export default {
 
       this.attrList.forEach((e) => {
         // 控制文本框的显示与隐藏
-        this.$set(e,"inputVisible",false)
-        this.$set(e,"inputValue","")
+        this.$set(e, "inputVisible", false);
+        this.$set(e, "inputValue", "");
 
         if (e.attr_vals.length !== 0) {
           e.valueList = e.attr_vals.split(" ");
@@ -215,27 +244,74 @@ export default {
       console.log(this.attrList);
     },
     editParam(scope) {
+      this.currentParam = scope;
+      this.editDialogVisible = true;
+    },
+    closeEditDialog() {
+      this.editDialogVisible = false;
+    },
+    async deleteParam(scope) {
+      const res = await this.$confirm(
+        "此操作将永久删除该文件, 是否继续?",
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        }
+      ).catch((err) => err);
+      if (res !== "confirm") {
+        return;
+      }
+      const { data: result } = await this.$http.delete(
+        `categories/${scope.row.cat_id}/attributes/${scope.row.attr_id}`
+      );
+      console.log(result);
+      this.getAttrList();
+      this.$message.success(result.meta.msg);
+    },
+    async handleTabClose(index, scope) {
+      scope.row.valueList.splice(index, 1);
+      scope.row.inputVisible=!scope.row.inputVisible
+      scope.row.inputVisible=!scope.row.inputVisible
       console.log(scope);
 
+      scope.row.attr_vals = scope.row.valueList.join(" ");
+      const { data: res } = await this.$http.put(
+        `categories/${scope.row.cat_id}/attributes/${scope.row.attr_id}`,
+        {
+          attr_name: scope.row.attr_name,
+          attr_sel: scope.row.attr_sel,
+          attr_vals: scope.row.attr_vals,
+        }
+      );
+      this.$message.success(res.meta.msg);
     },
-    deleteParam(scope) {},
-    handleTabClose(scope) {
-      console.log(scope);
-    },
-    getAttrValue(scope) {},
-    handleInputConfirm(scope) {
-
-        scope.row.inputVisible = false;
-
+    async handleInputConfirm(scope) {
+      if (scope.row.inputValue.trim().length === 0) return;
+      scope.row.valueList.push(scope.row.inputValue);
+      scope.row.attr_vals = scope.row.valueList.join(" ");
+      console.log(scope.row);
+      const res = await this.$http.put(
+        `categories/${scope.row.cat_id}/attributes/${scope.row.attr_id}`,
+        {
+          attr_name: scope.row.attr_name,
+          attr_sel: scope.row.attr_sel,
+          attr_vals: scope.row.attr_vals,
+        }
+      );
+      console.log(res);
+      scope.row.inputVisible = false;
+      scope.row.inputValue = "";
     },
     showInput(scope) {
-      scope.row.inputVisible=true;
-      this.$nextTick(_ => {
-        let a="saveTagInput-"+scope.$index
-          this.$refs[a].$refs.input.focus();
-        });
+      scope.row.inputVisible = true;
+      this.$nextTick((_) => {
+        let a = "saveTagInput-" + scope.$index;
+        this.$refs[a].$refs.input.focus();
+      });
     },
-  },
+    },
   mounted() {
     this.getAttrList();
   },
@@ -250,6 +326,7 @@ export default {
   components: {
     breadcrumb,
     addParam,
+    editParam,
   },
 };
 </script>

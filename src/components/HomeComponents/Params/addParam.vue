@@ -16,12 +16,13 @@
         <el-form-item :label="tabName" prop="inputValue">
           <el-input v-model="form.inputValue" ></el-input>
         </el-form-item>
-      </el-form>
 
-      <span slot="footer" class="dialog-footer">
+      <el-form-item>
         <el-button @click="handleClose">取 消</el-button>
         <el-button type="primary" @click="handleConfirm">确 定</el-button>
-      </span>
+      </el-form-item>
+      </el-form>
+
     </el-dialog>
   </div>
 </template>
@@ -53,7 +54,7 @@ export default {
     handleConfirm() {
       this.$refs.inputForm.validate( async(valid) => {
         if (!valid) {
-          return this.$message({ message: valid, type: "danger" });
+          return valid
         }
         const {data:res}=await this.$http.post(`categories/${this.cateId}/attributes`,{ 
           attr_name:this.form.inputValue,
