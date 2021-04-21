@@ -20,6 +20,10 @@
             ></el-button>
           </el-input>
         </el-col>
+        <el-col :span="2">
+          <el-button type="primary" size="default" @click="addGoods">添加商品</el-button>
+          
+        </el-col>
       </el-row>
       <el-table :data="goodsList" border stripe>
         <el-table-column type="index" label="#"> </el-table-column>

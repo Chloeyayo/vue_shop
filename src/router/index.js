@@ -10,7 +10,7 @@ import Rights from '../components/HomeComponents/Rights.vue'
 import Categories from '../components/HomeComponents/Categories.vue'
 import Params from '../components/HomeComponents/Params.vue'
 import Goods from '../components/HomeComponents/Goods.vue'
-
+import addGoods from '../components/HomeComponents/Goods/add.vue'
 Vue.use(VueRouter)
 
 const routes = [
@@ -23,28 +23,30 @@ const routes = [
     redirect: '/welcome',
 
     children: [
-    {
-      path: '/welcome',
-      component: Welcome
-    }, {
-      path: '/users',
-      component: Users
-    }, {
-      path: '/roles',
-      component: Roles
-    }, {
-      path: "/rights",
-      component: Rights
-    }, {
-      path: '/categories',
-      component: Categories
-    },{
-      path: '/params',
-      component: Params
-    },{
-      path:'/goods',
-      component: Goods
-    }]
+      {
+        path: '/welcome',
+        component: Welcome
+      }, {
+        path: '/users',
+        component: Users
+      }, {
+        path: '/roles',
+        component: Roles
+      }, {
+        path: "/rights",
+        component: Rights
+      }, {
+        path: '/categories',
+        component: Categories
+      }, {
+        path: '/params',
+        component: Params
+      }, {
+        path: '/goods',
+        component: Goods,
+      }, { path: '/goods/add', component: addGoods }
+
+    ]
   },
 
 ]
@@ -53,8 +55,8 @@ const router = new VueRouter({
   routes
 })
 router.beforeEach((to, _from, next) => {
-  
-  if (to.path=="/login" ) {
+
+  if (to.path == "/login") {
     return next()
   }
   const token = window.sessionStorage.getItem('token')
