@@ -102,6 +102,9 @@ export default {
     handleCurrentChange(page){
       this.queryInfo.pagenum=page
       this.getGoodsList()
+    },
+    addGoods(){
+      this.$router.push("/goods/add")
     }
 
   },

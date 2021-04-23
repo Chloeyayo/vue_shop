@@ -30,7 +30,11 @@
         label-width="100px"
         label-position="top"
       >
-        <el-tabs tab-position="left" v-model="activeSteps">
+        <el-tabs
+          tab-position="left"
+          v-model="activeSteps"
+          :before-leave="handleTabChanges"
+        >
           <el-tab-pane label="基本信息" name="0">
             <el-form-item label="商品名称" prop="goods_name">
               <el-input v-model="addForm.goods_name" width="100"></el-input>
@@ -45,12 +49,42 @@
             <el-form-item label="商品数量" prop="goods_number">
               <el-input v-model="addForm.goods_number" type="number"></el-input>
             </el-form-item>
-            <el-form-item label="商品分类">
-              
+            <el-form-item label="商品分类" prop="goods_cat">
+              <el-cascader
+                v-model="addForm.goods_cat"
+                :options="cateList"
+                :props="cateProps"
+                @change="handleCateChange"
+              ></el-cascader>
             </el-form-item>
           </el-tab-pane>
-          <el-tab-pane label="商品参数" name="1">商品参数</el-tab-pane>
-          <el-tab-pane label="商品属性" name="2">商品属性</el-tab-pane>
+          <el-tab-pane label="商品参数" name="1">
+            <el-form-item
+              :label="item.attr_name"
+              v-for="(item, index) in attrsMany"
+              :key="index"
+            >
+              <el-checkbox-group v-model="checkList" > 
+                <el-checkbox
+                  border
+                  :label="cheackItem"
+                  v-for="(cheackItem, index) in item.attr_vals"
+                  :key="index"
+                  @change="handleChange"
+                  checked
+                ></el-checkbox>
+              </el-checkbox-group>
+            </el-form-item>
+          </el-tab-pane>
+          <el-tab-pane label="商品属性" name="2">
+            <el-form-item
+              :label="item.attr_name"
+              v-for="(item, index) in attrsOnly"
+              :key="index"
+            >
+              <el-input v-model="item.attr_vals"></el-input>
+            </el-form-item>
+          </el-tab-pane>
           <el-tab-pane label="商品图片" name="3">商品图片</el-tab-pane>
           <el-tab-pane label="商品内容" name="4">商品内容</el-tab-pane>
         </el-tabs>
@@ -70,7 +104,20 @@ export default {
         goods_price: "",
         goods_weight: "",
         goods_number: "",
+        goods_cat: [1, 3, 6],
+        pics: [],
+        goods_introduce: "",
       },
+      attrsMany: [],
+      attrsOnly: [],
+      checkList: [],
+      cateList: [],
+      cateProps: {
+        label: "cat_name",
+        value: "cat_id",
+        children: "children",
+      },
+      attrList: [],
       addFormRules: {
         goods_name: [
           { required: true, message: "请输入活动名称", trigger: "blur" },
@@ -93,6 +140,76 @@ export default {
       },
     };
   },
+  methods: {
+    async getCategoryList() {
+      const { data: res } = await this.$http.get("/categories");
+      this.cateList = res.data;
+    },
+    handleCateChange() {
+      console.log(this.addForm);
+      if (this.addForm.goods_cat.length !== 3) {
+        this.addForm.goods_cat = [];
+        this.$message.error("请选择三级分类");
+      }
+    },
+    async getAttrListMany() {
+      const { data: res } = await this.$http.get(
+        `categories/${this.cateId}/attributes`,
+        {
+          params: { sel: "many" },
+        }
+      );
+      if (res.meta.status !== 200) {
+        return this.$message.error(res.meta.msg);
+      }
+      this.attrsMany = res.data;
+      this.attrsMany.forEach((item) => {
+        item.attr_vals = item.attr_vals.split(" ");
+        console.log(item.attr_vals);
+      });
+      // console.log(this.attrs);
+    },
+    async getAttrListOnly() {
+      const { data: res } = await this.$http.get(
+        `categories/${this.cateId}/attributes`,
+        {
+          params: {
+            sel: "only",
+          },
+        }
+      );
+      if (res.meta.status !== 200) {
+        return this.$message.error(res.meta.msg);
+      }
+      this.attrsOnly = res.data;
+    },
+    handleTabChanges(activeName, oldActiveName) {
+      if (oldActiveName == 0 && this.addForm.goods_cat.length !== 3) {
+        this.$message.error("请选择商品分类");
+        return false;
+      }
+      if (activeName == 1) {
+        this.getAttrListMany();
+      }
+      if (activeName == 2) {
+        this.getAttrListOnly();
+      }
+    },
+    handleChange(){
+      console.log(this.checkList)
+    }
+  },
+  created() {
+    this.getCategoryList();
+  },
+  computed: {
+    cateId() {
+      if (this.addForm.goods_cat.length === 3) {
+        return this.addForm.goods_cat[2];
+      }
+      return null;
+    },
+  },
   components: {
     breadcrumb,
   },
@@ -105,5 +222,11 @@ export default {
 }
 .el-card {
   text-align: left;
+}
+.el-cascader {
+  width: 250px;
+}
+.el-checkbox {
+  margin: 0 15px 0 0 !important;
 }
 </style>
