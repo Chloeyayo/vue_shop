@@ -64,13 +64,12 @@
               v-for="(item, index) in attrsMany"
               :key="index"
             >
-              <el-checkbox-group v-model="checkList" > 
+              <el-checkbox-group v-model="checkList">
                 <el-checkbox
                   border
                   :label="cheackItem"
                   v-for="(cheackItem, index) in item.attr_vals"
                   :key="index"
-                  @change="handleChange"
                   checked
                 ></el-checkbox>
               </el-checkbox-group>
@@ -85,11 +84,41 @@
               <el-input v-model="item.attr_vals"></el-input>
             </el-form-item>
           </el-tab-pane>
-          <el-tab-pane label="商品图片" name="3">商品图片</el-tab-pane>
-          <el-tab-pane label="商品内容" name="4">商品内容</el-tab-pane>
+          <el-tab-pane label="商品图片" name="3">
+            <el-upload
+              class="upload-demo"
+              action="http://127.0.0.1:8888/api/private/v1/upload"
+              :on-preview="handleImgPreview"
+              :on-remove="handleImgRemove"
+              :on-success="handleUploadSuccess"
+              :headers="headers"
+              list-type="picture"
+              drag
+              multiple
+            >
+              <i class="el-icon-upload"></i>
+              <div class="el-upload__text">
+                将文件拖到此处，或<em>点击上传</em>
+              </div>
+            </el-upload>
+          </el-tab-pane>
+          <el-tab-pane label="商品内容" name="4">
+            <quill-editor
+              ref="myTextEditor"
+              v-model="addForm.goods_introduce"
+              :options="editorOption"
+            ></quill-editor>
+              <el-button type="primary" @click="add">添加商品</el-button>
+            
+          </el-tab-pane>
         </el-tabs>
       </el-form>
     </el-card>
+
+    <el-dialog :visible.sync="imgDialogVisible" width="80%" top="20px">
+      <el-image :src="imgUrl" fit="fill" :lazy="true" width="100%" ></el-image>
+      
+       </el-dialog>
   </div>
 </template>
 
@@ -137,6 +166,12 @@ export default {
         goods_cat: [
           { required: true, message: "请选择商品分类", trigger: "blur" },
         ],
+      },
+      headers: { Authorization: window.sessionStorage.getItem("token") },
+      imgUrl: "",
+      imgDialogVisible: false,
+      editorOption: {
+        placeholder: "编辑文章内容",
       },
     };
   },
@@ -195,12 +230,36 @@ export default {
         this.getAttrListOnly();
       }
     },
-    handleChange(){
+
+    handleImgPreview(file) {
+      this.imgUrl = file.response.data.url;
+      this.imgDialogVisible = true;
+    },
+    handleImgRemove(file) {
+      console.log(file.response.data.tmp_path);
+      const deleteIndex = this.addForm.pics.findIndex(
+        (item) => item.pic == file.response.data.tmp_path
+      );
+      this.addForm.pics.splice(deleteIndex, 1);
+      console.log(this.addForm.pics);
+    },
+    handleUploadSuccess(response) {
+      this.addForm.pics.push({ pic: response.data.tmp_path });
+      console.log(this.addForm.pics);
+    },
+    onEditorReady(quill) {
+      console.log(this.$refs.myTextEditor.quill.getText());
+    },
+    add(){
+      this.addForm.goods_cat.join(',')
+      console.log(this.addForm)
       console.log(this.checkList)
     }
   },
   created() {
     this.getCategoryList();
+    this.getAttrListMany();
+    this.getAttrListOnly();
   },
   computed: {
     cateId() {
@@ -228,5 +287,11 @@ export default {
 }
 .el-checkbox {
   margin: 0 15px 0 0 !important;
+}
+/deep/ .ql-editor{
+  min-height: 300px !important;
+}
+.el-button{
+  margin-top: 15px;
 }
 </style>
