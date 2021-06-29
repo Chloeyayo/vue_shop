@@ -233,6 +233,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.el-row{
+  margin-bottom: 15px;
+}
 .el-pagination {
   margin-top: 20px;
 }

@@ -5,7 +5,7 @@
       :visible.sync="addCateDialogVisible"
       :before-close="hiddeAddDialog"
     >
-      <el-form ref="addCateForm" :model="addCateForm" label-width="80px" :rules="rules">
+      <el-form ref="addCateForm" :model="addCateForm" label-width="100px" :rules="rules">
         <el-form-item label="分类名称" prop="cat_name">
           <el-input v-model="addCateForm.cat_name"></el-input>
         </el-form-item>
