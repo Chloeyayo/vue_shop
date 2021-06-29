@@ -27,7 +27,6 @@ axios.interceptors.response.use(config =>{
 
 
 Vue.use(less)
-Vue.use(VueQuillEditor)
 Vue.config.productionTip = false
 
 Vue.filter('dateFormat',v=>{
