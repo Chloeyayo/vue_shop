@@ -9,8 +9,13 @@
   "dependencies": {
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
+<<<<<<< HEAD
     "echarts": "^5.2.0",
+=======
+    "echarts": "^5.1.2",
+>>>>>>> e4efb11fd18f7c242296b58c44e198b8a9927848
     "element-ui": "^2.4.5",
+    "nprogress": "^0.2.0",
     "vue": "^2.6.11",
     "vue-quill-editor": "^3.0.6",
     "vue-resource": "^1.5.1",
@@ -29,5 +34,20 @@
     "vue-cli-plugin-element": "^1.0.1",
     "vue-template-compiler": "^2.6.11",
     "webpack": "^4.46.0"
-  }
+  },
+  "description": "```\r npm install\r ```",
+  "main": "babel.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Chloeyayo/vue_shop.git"
+  },
+  "keywords": [
+    "vue_shop"
+  ],
+  "author": "Chloeyayo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Chloeyayo/vue_shop/issues"
+  },
+  "homepage": "https://github.com/Chloeyayo/vue_shop#readme"
 }

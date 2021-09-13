@@ -234,7 +234,7 @@ this.editRightsDialogVisible = true;
     },
     cheackRights(row){
       return row.children == undefined || row.children.length <= 0
-    }
+    },
   },
 
 };

@@ -10,9 +10,14 @@ import Rights from '../components/HomeComponents/Rights.vue'
 import Categories from '../components/HomeComponents/Categories.vue'
 import Params from '../components/HomeComponents/Params.vue'
 import Goods from '../components/HomeComponents/Goods.vue'
+<<<<<<< HEAD
 import addGoods from '../components/HomeComponents/Goods/add.vue'
 import Orders from '../components/HomeComponents/Orders.vue'
 import Reports from '../components/HomeComponents/Reports.vue'
+=======
+import Orders from '../components/HomeComponents/Orders.vue'
+
+>>>>>>> e4efb11fd18f7c242296b58c44e198b8a9927848
 Vue.use(VueRouter)
 
 const routes = [
@@ -25,6 +30,7 @@ const routes = [
     redirect: '/welcome',
 
     children: [
+<<<<<<< HEAD
       {
         path: '/welcome',
         component: Welcome
@@ -59,6 +65,36 @@ const routes = [
       }
 
     ]
+=======
+    {
+      path: '/welcome',
+      component: Welcome
+    }, {
+      path: '/users',
+      component: Users
+    }, {
+      path: '/roles',
+      component: Roles
+    }, {
+      path: "/rights",
+      component: Rights
+    }, {
+      path: '/categories',
+      component: Categories
+    },{
+      path: '/params',
+      component: Params
+    },{
+      path:'/goods',
+      component: Goods
+    },{
+      path:'/orders',
+      component: Orders
+    },{
+      path:'/reports',
+      component:()=>import("../components/HomeComponents/Reports.vue")
+    }]
+>>>>>>> e4efb11fd18f7c242296b58c44e198b8a9927848
   },
 
 ]

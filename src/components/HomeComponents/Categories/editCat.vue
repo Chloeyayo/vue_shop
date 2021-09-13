@@ -7,15 +7,7 @@
       width="50%"
     >
       <el-form ref="editForm" :model="editForm" label-width="80px">
-        <el-form-item label="用户ID">
-          <el-input v-model="editForm.id"></el-input>
-        </el-form-item>
-        <el-form-item label="邮箱">
-          <el-input v-model="editForm.email" @input="onInput"></el-input>
-        </el-form-item>
-        <el-form-item label="手机号">
-          <el-input v-model="editForm.mobile" @input="onInput"></el-input>
-        </el-form-item>
+
       </el-form>
 
       <span slot="footer" class="dialog-footer">
@@ -50,9 +42,7 @@ export default {
   },
   props: {
     editForm: {
-      id: "",
-      email: "",
-      mobile: "",
+
     },
     editDialogVisible: false,
   },

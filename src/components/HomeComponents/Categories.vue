@@ -14,7 +14,7 @@
         border
         row-key="cat_id"
         :tree-props="{ children: 'children' }"
-        >>
+      >
         <el-table-column type="index" label="#"> </el-table-column>
         <el-table-column prop="cat_name" label="名称分类"> </el-table-column>
         <el-table-column prop="cat_deleted" label="是否有效">
@@ -68,6 +68,11 @@
         @hiddeAddDialog="hiddeAddDialog"
         @getCategoryList="getCategoryList"
       ></addCat>
+      <editCat
+        :editCateDialogVisible="editCateDialogVisible"
+        :editCateForm="editCateForm"
+      >
+      </editCat>
     </el-card>
   </div>
 </template>
@@ -88,7 +93,9 @@ export default {
       },
       total: 0,
       addCateDialogVisible: false,
-      parentCategoryList:[],
+      parentCategoryList: [],
+      editCateDialogVisible: false,
+      editCateForm: {},
     };
   },
   methods: {
@@ -113,13 +120,13 @@ export default {
     },
     addCat() {
       this.addCateDialogVisible = true;
-      this.getparentCategoryList()
+      this.getparentCategoryList();
     },
     async getparentCategoryList() {
       const { data: res } = await this.$http.get("/categories", {
         params: {
-          type:2
-        }
+          type: 2,
+        },
       });
       if (res.meta.status !== 200) {
         return this.$message.error(res.meta.msg);
@@ -129,7 +136,11 @@ export default {
     hiddeAddDialog() {
       this.addCateDialogVisible = false;
     },
-    editCat(_row) {},
+    editCat(row) {
+      // this.editCateDialogVisible=true;
+      this.editCateForm=row
+      console.log(row);
+    },
     deleCat(_row) {},
     isEnabled(row) {
       return !row.isEnabled ? "el-icon-success" : "el-icon-error";

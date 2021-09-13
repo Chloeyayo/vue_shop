@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div id="rights">
     <breadcrumb :path="['权限管理', '权限列表']"></breadcrumb>
     <el-card class="box-card">
-      <el-table :data="rightList" style="width: 100%" height="850" border >
+      <el-table :data="rightList" style="width: 100%" height="550" border >
         <el-table-column type="index" label="#"> </el-table-column>
         <el-table-column prop="authName" label="权限名称"></el-table-column>
         <el-table-column prop="path" label="路径"> </el-table-column>
@@ -45,4 +45,5 @@ export default {
 </script>
 
 <style lang="less" scoped>
+
 </style>
