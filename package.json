@@ -3,17 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
+    "dev": "vue-cli-service serve",
     "build": "vue-cli-service build"
   },
   "dependencies": {
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
-<<<<<<< HEAD
     "echarts": "^5.2.0",
-=======
-    "echarts": "^5.1.2",
->>>>>>> e4efb11fd18f7c242296b58c44e198b8a9927848
     "element-ui": "^2.4.5",
     "nprogress": "^0.2.0",
     "vue": "^2.6.11",

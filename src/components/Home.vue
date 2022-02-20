@@ -5,7 +5,7 @@
         <img src="../assets/logo.png" alt="" class="logo" />
         <span @click="goHome">后台管理系统</span>
       </div>
-      <div class="hearder-right">
+      <div class="header-right">
         <span class="username">{{getUsername}}</span>
         <el-button @click="logout" class="logout">退出</el-button>
       </div>

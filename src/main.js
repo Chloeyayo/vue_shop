@@ -13,7 +13,7 @@ import 'nprogress/nprogress.css'
 
 Vue.prototype.$echarts = echarts
 Vue.prototype.$http = axios
-axios.defaults.baseURL = "http://127.0.0.1:8888/api/private/v1/"
+axios.defaults.baseURL = "http://127.0.0.1:8889/api/private/v1/"
 // axios.defaults.baseURL = "http://timemeetyou.com:8889/api/private/v1/"
 axios.interceptors.request.use(config => {
   NProgress.start()
